@@ -9,8 +9,8 @@ BEGIN
         SELECT 1
         FROM information_schema.columns
         WHERE table_schema = 'public'
-          AND table_name = 'audit_events'
-          AND column_name = 'user_id'
+            AND table_name = 'audit_events'
+            AND column_name = 'user_id'
     ) THEN
         LOCK TABLE public.audit_events IN ACCESS EXCLUSIVE MODE;
 

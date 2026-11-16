@@ -16,7 +16,14 @@ What's NOT here (for you to build):
 - Logging of actions taken in YOUR tool
 """
 
+"""
+What's added:
+1. Roles and Permissions: You can add a Role model and associate it with the User model to define what actions each user can perform.
+2. Action Logging: You can create a new model, e.g., ActionLog, to
+"""
+
 from datetime import datetime, timezone
+from urllib import request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from flask_bcrypt import Bcrypt
@@ -143,3 +150,21 @@ class LegacyAccessLog(db.Model):
     username = db.Column(db.String(80))  # "ops_shared" = the shared account
     ip_address = db.Column(db.String(45))
     success = db.Column(db.Boolean, nullable=False)
+
+
+class AuditEvent(db.Model):
+    """
+    Audit events for tracking user actions in the application.
+    This is a placeholder for you to implement your own logging of actions.
+    """
+    __tablename__ = "audit_events"
+
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime(timezone=True), default=utcnow, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    event_type = db.Column(db.String(50), nullable=False)
+    outcome = db.Column(db.String(20), nullable=False)  # e.g., "success", "failure"
+    actor_user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)  # The user who performed the action
+    target_user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)  # The user affected by the action
+    reason_code = db.Column(db.String(50))  # Optional reason code for the event
+    ip_address = db.Column(db.String(45), nullable=True)

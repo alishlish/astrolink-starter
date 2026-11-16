@@ -46,7 +46,8 @@ class User(UserMixin, db.Model):
     job_title = db.Column(db.String(50))  # display label only, NOT a permission
     employment_status = db.Column(db.String(20), default="employed")  # "employed" or "left"
     created_at = db.Column(db.DateTime, default=utcnow)
-
+    session_version = db.Column(db.Integer, nullable=False, server_default="0")
+    
     def set_password(self, password):
         self.password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
 
@@ -161,7 +162,6 @@ class AuditEvent(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime(timezone=True), default=utcnow, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     event_type = db.Column(db.String(50), nullable=False)
     outcome = db.Column(db.String(20), nullable=False)  # e.g., "success", "failure"
     actor_user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)  # The user who performed the action

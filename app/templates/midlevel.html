@@ -2,6 +2,20 @@
 {% block title_extra %} — Home{% endblock %}
 
 {% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/midlevel.css') }}">
+
+
+<script>
+function openTab(evt, tabId) {
+  document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+  document.getElementById(tabId).style.display = 'block';
+  evt.currentTarget.classList.add('active');
+}
+</script>
+
 <div class="page-header">
         <h4>MID-LEVEL</h4>
 <p>Abilities include:</p>
@@ -20,4 +34,76 @@
     <li>Ability to AIM SATELLITE'S ANTENNA (med)</li>
 </ul>
 </div>
+
+<div class="abilities-box">
+    <h4>Commands:</h4>
+<div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'tab1')">Ping Satellites</button>
+    <button class="tab-btn" onclick="openTab(event, 'tab2')">Change Power Mode</button>
+    <button class="tab-btn" onclick="openTab(event, 'tab3')">Resume Normal Operation</button>
+    <button class="tab-btn" onclick="openTab(event, 'tab4')">Enter Safe Mode</button>
+    <button class="tab-btn" onclick="openTab(event, 'tab5')">Aim Satellite's Antenna</button>
+</div>
+</div>
+
+<div class="command_tabs">
+<div id="tab1" class="tab-content" style="display: block;">
+    <form action="{{ url_for('commands.ping_command')}}" method="POST">
+        <p>
+            <label for="satellite">Satellite: </label>
+            <input type="text" id="satellite" name="satellite" required>
+        </p>
+        <button type="submit">Send the ping</button>
+    </form>
+</div>
+
+<div id="tab2" class="tab-content" style="display: none;">
+    <form action="{{ url_for('commands.power_mode_command')}}" method="POST">
+        <p>
+            <label for="satellite">Satellite: </label>
+            <input type="text" id="satellite" name="satellite" required>
+        </p>
+        <p>
+            <label for="mode">Power Mode (0 for low or 1 for normal): </label>
+            <input type="range" min="0" max="1" value="0" id="mode" name="mode" required>
+        </p>
+        <button type="submit">Set power mode</button>
+    </form>
+</div>
+
+<div id="tab3" class="tab-content" style="display: none;">
+    <form action="{{ url_for('commands.resume_normal_command')}}" method="POST">
+        <p>
+            <label for="satellite">Satellite: </label>
+            <input type="text" id="satellite" name="satellite" required>
+        </p>
+        <button type="submit">Resume normal operations</button>
+    </form>
+</div>
+
+<div id="tab4" class="tab-content" style="display: none;">
+    <form action="{{ url_for('commands.safe_mode_command')}}" method="POST">
+        <p>
+            <label for="satellite">Satellite: </label>
+            <input type="text" id="satellite" name="satellite" required>
+        </p>
+        <button type="submit">Enter safe mode</button>
+    </form>
+</div>
+
+<div id="tab5" class="tab-content" style="display: none;">
+    <form action="{{ url_for('commands.aim_satellite_command')}}" method="POST">
+        <p>
+            <label for="satellite">Satellite: </label>
+            <input type="text" id="satellite" name="satellite" required>
+        </p>
+        <p>
+            <label for="aim_angle">Angle (in degrees) that the satellite should point to: </label>
+            <input type="number" min="0" max="360" step="1" id="aim_angle" name="aim_angle" required>
+        </p>
+        <button type="submit">Adjust Antenna Angle</button>
+    </form>
+</div>
+</div>
 {% endblock %}
+

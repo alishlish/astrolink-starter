@@ -22,6 +22,7 @@ def index():
         return getAuthorizedRoute()
     return redirect(url_for("auth.login"))
 
+# home routes
 
 @auth_bp.route("/home")
 @login_required
@@ -60,6 +61,7 @@ def admin():
     """Admin Home"""
     return render_template("admin.html")
 
+# commands
 
 def getAuthorizedRoute():
 

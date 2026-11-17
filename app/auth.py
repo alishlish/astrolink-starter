@@ -19,7 +19,7 @@ auth_bp = Blueprint("auth", __name__)
 @auth_bp.route("/")
 def index():
     if current_user.is_authenticated:
-        return redirect(url_for("auth.home"))
+        return redirect(url_for("auth.admin"))
     return redirect(url_for("auth.login"))
 
 
@@ -29,11 +29,41 @@ def home():
     """Placeholder page after login. Point this at your own tool's main page."""
     return render_template("home.html")
 
+@auth_bp.route("/admin")
+@login_required
+def admin():
+    """Admin Home"""
+    return render_template("admin.html")
+
+@auth_bp.route("/visitor")
+@login_required
+def visitor():
+    """Visitor Home"""
+    return render_template("visitor.html")
+
+@auth_bp.route("/junior")
+@login_required
+def junior():
+    """Junior Home"""
+    return render_template("junior.html")
+
+@auth_bp.route("/senior")
+@login_required
+def senior():
+    """Senior Home"""
+    return render_template("senior.html")
+
+@auth_bp.route("/midlevel")
+@login_required
+def midlevel():
+    """Mid Home"""
+    return render_template("midlevel.html")
+
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("auth.home"))
+        return redirect(url_for("auth.admin"))
 
     if request.method == "POST":
         username = request.form.get("username", "").strip()
@@ -57,7 +87,7 @@ def login():
                 actor_user_id=user.id
             )
             flash(f"Logged in as {user.display_name or user.username}.", "success")
-            return redirect(url_for("auth.home"))
+            return redirect(url_for("auth.admin"))
 
         record_audit_event(
             event_type = "login",

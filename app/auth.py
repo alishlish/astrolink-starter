@@ -19,7 +19,7 @@ auth_bp = Blueprint("auth", __name__)
 @auth_bp.route("/")
 def index():
     if current_user.is_authenticated:
-        return redirect(url_for("auth.admin"))
+        return getAuthorizedRoute()
     return redirect(url_for("auth.login"))
 
 
@@ -29,11 +29,6 @@ def home():
     """Placeholder page after login. Point this at your own tool's main page."""
     return render_template("home.html")
 
-@auth_bp.route("/admin")
-@login_required
-def admin():
-    """Admin Home"""
-    return render_template("admin.html")
 
 @auth_bp.route("/visitor")
 @login_required
@@ -47,23 +42,47 @@ def junior():
     """Junior Home"""
     return render_template("junior.html")
 
-@auth_bp.route("/senior")
-@login_required
-def senior():
-    """Senior Home"""
-    return render_template("senior.html")
-
 @auth_bp.route("/midlevel")
 @login_required
 def midlevel():
     """Mid Home"""
     return render_template("midlevel.html")
 
+@auth_bp.route("/senior")
+@login_required
+def senior():
+    """Senior Home"""
+    return render_template("senior.html")
+
+@auth_bp.route("/admin")
+@login_required
+def admin():
+    """Admin Home"""
+    return render_template("admin.html")
+
+
+def getAuthorizedRoute():
+
+    if current_user.permissions == "visitor":
+        return redirect(url_for("auth.visitor"))
+    
+    elif current_user.permissions == "junior":
+        return redirect(url_for("auth.junior"))
+    
+    elif current_user.permissions == "midlevel":
+        return redirect(url_for("auth.midlevel"))
+    
+    elif current_user.permissions == "senior":
+            return redirect(url_for("auth.senior"))
+    
+    elif current_user.permissions == "admin":
+            return redirect(url_for("auth.admin"))
+
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("auth.admin"))
+        return getAuthorizedRoute()
 
     if request.method == "POST":
         username = request.form.get("username", "").strip()
@@ -87,7 +106,8 @@ def login():
                 actor_user_id=user.id
             )
             flash(f"Logged in as {user.display_name or user.username}.", "success")
-            return redirect(url_for("auth.admin"))
+            return getAuthorizedRoute()
+
 
         record_audit_event(
             event_type = "login",

@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Junior Employee Home</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title_extra %} — Home{% endblock %}
+
+{% block content %}
+<div class="page-header">
+            <h4>JUNIOR</h4>
     <p>Abilities include:</p>
     <ul>
         <li>List of satellites and their info</li>
         <li>List of ground stations</li>
         <li>Ability to PING satellites</li>
     </ul>
-</body>
-</html>
+</div>
+{% endblock %}

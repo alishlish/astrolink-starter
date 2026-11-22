@@ -112,3 +112,31 @@ def deorbit_satellite_command():
         satellite = Satellite.query.filter_by(name=sat_name).first()
     execute_command(satellite, "deorbit")
     return getAuthorizedRoute()
+
+@commands_bp.route("/display_subscribers", methods=["GET"])
+def display_subscribers_command():
+    subscribers = []
+    for s in Subscriber.query.order_by(Subscriber.id):
+        subscribers.append(f"  {s.full_name:<16} {s.email:<30} {s.phone}  {s.home_address}")
+    return subscribers
+
+@commands_bp.route("/display_users_command", methods=["GET"])
+def display_users_command():
+    users = []
+    for u in User.query.order_by(User.id):
+        users.append(f"  {u.username:<10} {u.display_name:<17} {u.job_title:<20} {u.permissions:<20} {u.employment_status}")
+    return users
+
+@commands_bp.route("/display_LegacyAccessLog_command", methods=["GET"])
+def display_LegacyAccessLog_command():
+    access_log = []
+    for a in LegacyAccessLog.query.order_by(LegacyAccessLog.timestamp.desc()).limit(40):
+        access_log.append(f"  {fmt(a.timestamp)}  {a.username:<10} {a.ip_address:<14} {'ok' if a.success else 'FAILED'}")    
+    return access_log
+
+@commands_bp.route("/display_AuditEvents_command", methods=["GET"])
+def display_AuditEvents_command():
+    events = []
+    for a in AuditEvent.query.order_by(AuditEvent.timestamp.desc()):
+        events.append(f"  {fmt(a.timestamp)}  {a.event_type:<14} {a.outcome:<14}")  
+    return events

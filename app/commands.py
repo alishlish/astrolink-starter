@@ -87,3 +87,28 @@ def aim_satellite_command():
     execute_command(satellite, "antenna_point", angle)
     return getAuthorizedRoute()
 
+@commands_bp.route("/adjust_orbit_command", methods=["GET", "POST"])
+def adjust_orbit_command():
+    if request.method == "POST":
+        sat_name = request.form.get("satellite", "").strip()
+        satellite = Satellite.query.filter_by(name=sat_name).first()
+        km = request.form.get("km_change", "").strip()
+    execute_command(satellite, "orbit_adjust", km)
+    return getAuthorizedRoute()
+
+@commands_bp.route("/firmware_update_command", methods=["GET", "POST"])
+def firmware_update_command():
+    if request.method == "POST":
+        sat_name = request.form.get("satellite", "").strip()
+        satellite = Satellite.query.filter_by(name=sat_name).first()
+        version = request.form.get("version", "").strip()
+    execute_command(satellite, "firmware_update", version)
+    return getAuthorizedRoute()
+
+@commands_bp.route("/deorbit_satellite_command", methods=["GET", "POST"])
+def deorbit_satellite_command():
+    if request.method == "POST":
+        sat_name = request.form.get("satellite", "").strip()
+        satellite = Satellite.query.filter_by(name=sat_name).first()
+    execute_command(satellite, "deorbit")
+    return getAuthorizedRoute()

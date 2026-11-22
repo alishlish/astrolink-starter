@@ -10,6 +10,8 @@ from app.simulator import COMMANDS, execute_command
 
 from app.auth import getAuthorizedRoute
 
+from show_data import fmt
+
 commands_bp = Blueprint("commands", __name__)
 
 @commands_bp.route("/display_satellites_command", methods=["GET"])
@@ -27,6 +29,16 @@ def display_ground_stations_command():
     for g in GroundStation.query.order_by(GroundStation.name):
         stats.append(f"  {g.name}  {g.status:<9} {g.ip_address:<12} {g.location}")
     return stats
+
+@commands_bp.route("/display_telemetry_command", methods=["GET"])
+def display_telemetry_command():
+    tels = []
+    for t in TelemetryReading.query.order_by(TelemetryReading.timestamp.desc()).limit(20):
+        gs = t.ground_station.name if t.ground_station else "NONE"
+        tels.append(f"  {fmt(t.timestamp)}  {t.satellite.name}  via {gs:<6} battery {t.battery_pct:>5}%  "
+              f"temp {t.temperature_c:>6} C  signal {t.signal_dbm} dBm  alt {t.altitude_km} km")
+
+    return tels
 
 @commands_bp.route("/ping_command", methods=["GET", "POST"])
 def ping_command():

@@ -25,6 +25,7 @@
             document.getElementById(tabId).style.display = 'block';
 
             let tabIdData = tabId + "_data";
+            document.getElementById(tabIdData).replaceChildren(); 
 
             for (let d of data) {
                 let newItem = document.createElement('li');
@@ -118,7 +119,7 @@
                 <select name="permissions" id="permissions" required>
                     <option value="visitor">Visitor</option>
                     <option value="junior">Junior Operator</option>
-                    <option value="operator">Operator</option>
+                    <option value="midlevel">Operator</option>
                     <option value="senior">Senior Operator</option>
                     <option value="admin">Admin</option>
                 </select>
@@ -148,7 +149,7 @@
                 <select name="permissions" id="permissions" required>
                     <option value="visitor">Visitor</option>
                     <option value="junior">Junior Operator</option>
-                    <option value="operator">Operator</option>
+                    <option value="midlevel">Operator</option>
                     <option value="senior">Senior Operator</option>
                     <option value="admin">Admin</option>
                 </select>

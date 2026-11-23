@@ -25,6 +25,7 @@
             document.getElementById(tabId).style.display = 'block';
 
             let tabIdData = tabId + "_data";
+            document.getElementById(tabIdData).replaceChildren(); 
 
             for (let d of data) {
                 let newItem = document.createElement('li');

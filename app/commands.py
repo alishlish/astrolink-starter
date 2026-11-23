@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from app.models import (
     AuditEvent, User, Satellite, GroundStation, TelemetryReading,
-    CommandLog, Subscriber, LegacyAccessLog
+    CommandLog, Subscriber, LegacyAccessLog, db
 )
 
 from app.simulator import COMMANDS, execute_command
@@ -13,6 +13,7 @@ from app.auth import getAuthorizedRoute
 from show_data import fmt
 
 commands_bp = Blueprint("commands", __name__)
+
 
 @commands_bp.route("/display_satellites_command", methods=["GET"])
 def display_satellites_command():
@@ -113,7 +114,7 @@ def deorbit_satellite_command():
     execute_command(satellite, "deorbit")
     return getAuthorizedRoute()
 
-@commands_bp.route("/display_subscribers", methods=["GET"])
+@commands_bp.route("/display_subscribers_command", methods=["GET"])
 def display_subscribers_command():
     subscribers = []
     for s in Subscriber.query.order_by(Subscriber.id):
@@ -140,3 +141,46 @@ def display_AuditEvents_command():
     for a in AuditEvent.query.order_by(AuditEvent.timestamp.desc()):
         events.append(f"  {fmt(a.timestamp)}  {a.event_type:<14} {a.outcome:<14}")  
     return events
+
+@commands_bp.route("/add_user_command", methods=["GET", "POST"])
+def add_user_command():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+        display_name = request.form.get("display_name", "").strip()
+        job_title = request.form.get("job_title", "").strip()
+        permissions = request.form.get("permissions", "").strip()
+
+        user = User(username=username, 
+                    display_name=display_name, 
+                    job_title=job_title,
+                    permissions=permissions)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+    return getAuthorizedRoute()
+
+@commands_bp.route("/remove_user_command", methods=["GET", "POST"])
+def remove_user_command():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        user = User.query.filter_by(username=username).first()
+
+        user.employment_status = "left"
+        db.session.commit()
+        
+    return getAuthorizedRoute()
+
+@commands_bp.route("/assign_user_permissions_command", methods=["GET", "POST"])
+def assign_user_permissions_command():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        permissions = request.form.get("permissions", "").strip()
+
+        user = User.query.filter_by(username=username).first()
+        user.permissions = permissions
+        db.session.commit()
+
+    return getAuthorizedRoute()

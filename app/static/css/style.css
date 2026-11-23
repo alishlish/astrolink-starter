@@ -335,3 +335,8 @@ tr:last-child td { border-bottom: none; }
     background-color: white;
     color: black;
 }
+
+.command_tabs select {
+    background-color: white;
+    color: black;
+}

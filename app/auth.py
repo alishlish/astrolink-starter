@@ -9,9 +9,9 @@ Notice what this does NOT do (these are things teams build):
   - expire sessions
 """
 
-from flask import Blueprint, render_template, redirect, url_for, flash, request, session
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session, abort
 from flask_login import login_user, logout_user, login_required, current_user
-from app.models import AuditEvent, User, db
+from app.models import AuditEvent, User, db, Satellite
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -55,11 +55,18 @@ def senior():
     """Senior Home"""
     return render_template("senior.html")
 
+
 @auth_bp.route("/admin")
 @login_required
 def admin():
-    """Admin Home"""
+    if current_user.permissions != "admin":
+        abort(403)
+
+    satellites = Satellite.query.all()
+    
+    
     return render_template("admin.html")
+
 
 # commands
 
